@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LMBi4buk0GQ=",
+  "dgSpecHash": "u+qTMKE1Tyw=",
   "success": true,
-  "projectFilePath": "D:\\Proyecto inventario tiendas\\back_tienda\\back_tienda.csproj",
+  "projectFilePath": "D:\\GitHub\\back_tienda\\back_tienda.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\accelwolf\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\accelwolf\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

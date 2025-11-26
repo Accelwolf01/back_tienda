@@ -3825,11 +3825,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Proyecto inventario tiendas\\back_tienda\\back_tienda.csproj",
+      "projectUniqueName": "D:\\GitHub\\back_tienda\\back_tienda.csproj",
       "projectName": "back_tienda",
-      "projectPath": "D:\\Proyecto inventario tiendas\\back_tienda\\back_tienda.csproj",
+      "projectPath": "D:\\GitHub\\back_tienda\\back_tienda.csproj",
       "packagesPath": "C:\\Users\\accelwolf\\.nuget\\packages\\",
-      "outputPath": "D:\\Proyecto inventario tiendas\\back_tienda\\obj\\",
+      "outputPath": "D:\\GitHub\\back_tienda\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
