@@ -1,6 +1,7 @@
 using AutoMapper;
 using back_tienda.Core.DTOs;
 using back_tienda.Core.Entities;
+using back_tienda.Core.Enums;
 using back_tienda.Core.Interfaces;
 
 namespace back_tienda.Application.Services;
