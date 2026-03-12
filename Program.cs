@@ -27,15 +27,22 @@ var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 
 // Limitar pool de conexiones a máximo 2 (plan gratuito de BD)
 dataSourceBuilder.ConnectionStringBuilder.MaxPoolSize = 2;
-dataSourceBuilder.ConnectionStringBuilder.MinPoolSize = 1;
-dataSourceBuilder.ConnectionStringBuilder.ConnectionIdleLifetime = 60;
+dataSourceBuilder.ConnectionStringBuilder.MinPoolSize = 0; // Cambiado a 0 para no retener conexiones si no hay tráfico
+dataSourceBuilder.ConnectionStringBuilder.ConnectionIdleLifetime = 10; // Liberar en 10 segundos
+dataSourceBuilder.ConnectionStringBuilder.Timeout = 15; // Timeout más agresivo
 
 var dataSource = dataSourceBuilder.Build();
 builder.Services.AddSingleton(dataSource);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(dataSource,
-        npgsqlOptions => npgsqlOptions.CommandTimeout(30)));
+{
+    options.UseNpgsql(dataSource, npgsqlOptions => 
+    {
+        npgsqlOptions.CommandTimeout(20);
+    });
+    // Desactivar tracking por defecto para ahorrar memoria y liberar conexiones rápido
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
 
 // Configurar AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
