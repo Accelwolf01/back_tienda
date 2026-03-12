@@ -25,11 +25,17 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 
+// Limitar pool de conexiones a máximo 2 (plan gratuito de BD)
+dataSourceBuilder.ConnectionStringBuilder.MaxPoolSize = 2;
+dataSourceBuilder.ConnectionStringBuilder.MinPoolSize = 1;
+dataSourceBuilder.ConnectionStringBuilder.ConnectionIdleLifetime = 60;
+
 var dataSource = dataSourceBuilder.Build();
 builder.Services.AddSingleton(dataSource);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(dataSource));
+    options.UseNpgsql(dataSource,
+        npgsqlOptions => npgsqlOptions.CommandTimeout(30)));
 
 // Configurar AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -85,7 +91,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200","https://front-tienda-zudf.onrender.com")
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "https://front-tienda-zudf.onrender.com"
+              )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -147,8 +156,11 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = string.Empty; // Swagger en la raíz
 });
 
-app.UseHttpsRedirection();
+// NOTA: No usar UseHttpsRedirection en Render (rompe CORS preflight).
+// Render maneja HTTPS a nivel de proxy; el app recibe HTTP internamente.
+// app.UseHttpsRedirection();
 
+// CORS debe ir ANTES de Authentication y Authorization
 app.UseCors("AllowAngular");
 
 app.UseAuthentication();
