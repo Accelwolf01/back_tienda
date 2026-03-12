@@ -304,6 +304,31 @@ public class UsuarioService : IUsuarioService
         return _mapper.Map<IEnumerable<UsuarioDto>>(usuarios);
     }
 
+    public async Task<UsuarioDto> CrearAsync(RegistroUsuarioDto dto)
+    {
+        // Verificar si el usuario ya existe
+        if (await _unitOfWork.Usuarios.ExisteUsuarioAsync(dto.Usuario))
+        {
+            throw new InvalidOperationException("El nombre de usuario ya está en uso");
+        }
+
+        if (await _unitOfWork.Usuarios.ExisteCorreoAsync(dto.Correo))
+        {
+            throw new InvalidOperationException("El correo ya está registrado");
+        }
+
+        // Crear usuario
+        var usuario = _mapper.Map<Usuario>(dto);
+        usuario.ContraseñaHash = BCrypt.Net.BCrypt.HashPassword(dto.Contraseña);
+        usuario.Estado = EstadoUsuario.ACTIVO;
+        usuario.FechaCreacion = DateTime.UtcNow;
+
+        await _unitOfWork.Usuarios.AddAsync(usuario);
+        await _unitOfWork.SaveChangesAsync();
+
+        return _mapper.Map<UsuarioDto>(usuario);
+    }
+
     public async Task<UsuarioDto> ActualizarAsync(Guid id, ActualizarUsuarioDto dto)
     {
         var usuario = await _unitOfWork.Usuarios.GetByIdAsync(id);

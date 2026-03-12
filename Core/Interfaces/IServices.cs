@@ -15,6 +15,7 @@ public interface IUsuarioService
 {
     Task<UsuarioDto?> GetByIdAsync(Guid id);
     Task<IEnumerable<UsuarioDto>> GetAllAsync();
+    Task<UsuarioDto> CrearAsync(RegistroUsuarioDto dto);
     Task<UsuarioDto> ActualizarAsync(Guid id, ActualizarUsuarioDto dto);
     Task<bool> EliminarAsync(Guid id);
 }

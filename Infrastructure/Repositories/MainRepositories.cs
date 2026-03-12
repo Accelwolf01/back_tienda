@@ -43,6 +43,7 @@ public class TiendaRepository : GenericRepository<Tienda>, ITiendaRepository
     public override async Task<IEnumerable<Tienda>> GetAllAsync()
     {
         return await _dbSet
+            .AsNoTracking()
             .Include(t => t.Dueño)
             .ToListAsync();
     }
@@ -105,6 +106,7 @@ public class ProductoRepository : GenericRepository<Producto>, IProductoReposito
     public override async Task<IEnumerable<Producto>> GetAllAsync()
     {
         return await _dbSet
+            .AsNoTracking()
             .Where(p => p.Estado == EstadoUsuario.ACTIVO)
             .Include(p => p.Categoria)
             .OrderBy(p => p.NombreProducto)

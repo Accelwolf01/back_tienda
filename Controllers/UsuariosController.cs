@@ -33,6 +33,14 @@ public class UsuariosController : ControllerBase
         return Ok(usuario);
     }
 
+    [HttpPost]
+    [Authorize(Roles = "ADMIN_SISTEMA")]
+    public async Task<ActionResult<UsuarioDto>> Create(RegistroUsuarioDto dto)
+    {
+        var usuario = await _usuarioService.CrearAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = usuario.IdUsuario }, usuario);
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<UsuarioDto>> Update(Guid id, ActualizarUsuarioDto dto)
     {
