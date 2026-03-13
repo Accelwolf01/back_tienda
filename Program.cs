@@ -16,9 +16,12 @@ using back_tienda.Core.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar el puerto para Render
-var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
-builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+// Configurar el puerto para Render (solo si existe la variable PORT)
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
