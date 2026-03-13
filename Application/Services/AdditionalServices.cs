@@ -379,4 +379,18 @@ public class UsuarioService : IUsuarioService
 
         return true;
     }
+
+    public async Task<bool> RestablecerContrasenaAsync(Guid idUsuario, string nuevaContraseña)
+    {
+        var usuario = await _unitOfWork.Usuarios.GetByIdAsync(idUsuario);
+        if (usuario == null) return false;
+
+        usuario.ContraseñaHash = BCrypt.Net.BCrypt.HashPassword(nuevaContraseña);
+        usuario.FechaUltimaModificacion = DateTime.UtcNow;
+
+        await _unitOfWork.Usuarios.UpdateAsync(usuario);
+        await _unitOfWork.SaveChangesAsync();
+
+        return true;
+    }
 }

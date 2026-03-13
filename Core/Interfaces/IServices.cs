@@ -18,6 +18,7 @@ public interface IUsuarioService
     Task<UsuarioDto> CrearAsync(RegistroUsuarioDto dto);
     Task<UsuarioDto> ActualizarAsync(Guid id, ActualizarUsuarioDto dto);
     Task<bool> EliminarAsync(Guid id);
+    Task<bool> RestablecerContrasenaAsync(Guid id, string nuevaContraseña);
 }
 
 public interface ITiendaService

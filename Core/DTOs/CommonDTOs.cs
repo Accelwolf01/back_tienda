@@ -50,6 +50,10 @@ public record CambiarContraseñaDto(
     string ContraseñaNueva
 );
 
+public record RestablecerContrasenaDto(
+    string NuevaContraseña
+);
+
 // DTOs de Tienda
 public record TiendaDto(
     Guid IdTienda,

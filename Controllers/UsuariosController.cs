@@ -56,4 +56,13 @@ public class UsuariosController : ControllerBase
         if (!result) return NotFound();
         return NoContent();
     }
+
+    [HttpPost("{id}/restablecer-contrasena")]
+    [Authorize(Roles = "ADMIN_SISTEMA")]
+    public async Task<IActionResult> RestablecerContrasena(Guid id, [FromBody] RestablecerContrasenaDto dto)
+    {
+        var result = await _usuarioService.RestablecerContrasenaAsync(id, dto.NuevaContraseña);
+        if (!result) return NotFound(new { mensaje = "Usuario no encontrado" });
+        return Ok(new { mensaje = "Contraseña restablecida exitosamente" });
+    }
 }
