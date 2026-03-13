@@ -23,13 +23,16 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
-
 // Limitar pool de conexiones a máximo 2 (plan gratuito de BD)
-dataSourceBuilder.ConnectionStringBuilder.MaxPoolSize = 2;
-dataSourceBuilder.ConnectionStringBuilder.MinPoolSize = 0; // Cambiado a 0 para no retener conexiones si no hay tráfico
-dataSourceBuilder.ConnectionStringBuilder.ConnectionIdleLifetime = 10; // Liberar en 10 segundos
-dataSourceBuilder.ConnectionStringBuilder.Timeout = 15; // Timeout más agresivo
+// Usamos Pooling=false para forzar el cierre inmediato y físico de cada conexión
+var builderConn = new NpgsqlConnectionStringBuilder(connectionString)
+{
+    Pooling = false,
+    Timeout = 20,
+    CommandTimeout = 20
+};
+
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(builderConn.ToString());
 
 var dataSource = dataSourceBuilder.Build();
 builder.Services.AddSingleton(dataSource);
@@ -154,6 +157,26 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Manejo de errores detallado (útil para debug en Render)
+app.Use(async (context, next) =>
+{
+    try { await next(); }
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        // Asegurar que CORS se envíe incluso en error
+        context.Response.Headers.Append("Access-Control-Allow-Origin", "https://front-tienda-zudf.onrender.com");
+        context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+        
+        await context.Response.WriteAsJsonAsync(new { 
+            error = "Error interno", 
+            message = ex.Message,
+            detail = ex.InnerException?.Message 
+        });
+    }
+});
 
 // Configurar pipeline HTTP
 app.UseSwagger();
